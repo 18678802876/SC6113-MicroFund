@@ -10,35 +10,35 @@ function status(message, kind = "") {
 }
 
 function eth(value) {
-  return Number(ethers.formatEther(value)).toLocaleString("zh-CN", { maximumFractionDigits: 8 });
+  return Number(ethers.formatEther(value)).toLocaleString("en-US", { maximumFractionDigits: 8 });
 }
 
 function shares(value) {
-  return Number(ethers.formatUnits(value, 18)).toLocaleString("zh-CN", { maximumFractionDigits: 6 });
+  return Number(ethers.formatUnits(value, 18)).toLocaleString("en-US", { maximumFractionDigits: 6 });
 }
 
 function parsePositive(id) {
   const value = $(id).value.trim();
-  if (!/^\d+(\.\d+)?$/.test(value)) throw new Error("请输入有效的正数。请使用小数点，不要输入负数。");
+  if (!/^\d+(\.\d+)?$/.test(value)) throw new Error("Enter a positive number using a decimal point.");
   const wei = ethers.parseEther(value);
-  if (wei <= 0n) throw new Error("金额必须大于零。");
+  if (wei <= 0n) throw new Error("The amount must be greater than zero.");
   return wei;
 }
 
 function friendly(error) {
-  if (error?.code === 4001 || error?.code === "ACTION_REJECTED") return "已在钱包中取消交易。";
+  if (error?.code === 4001 || error?.code === "ACTION_REJECTED") return "Transaction cancelled in the wallet.";
   const reason = [error?.reason, error?.shortMessage, error?.message, error?.info?.error?.message]
     .filter(Boolean).join(" · ") || String(error);
   const known = ["Only owner", "Amount must be positive", "Amount too small", "Insufficient shares", "Pool lacks funds", "Payout too small", "Payout failed"];
   const found = known.find((item) => reason.includes(item));
   const translations = {
-    "Only owner": "只有管理员可以执行此操作。",
-    "Amount must be positive": "投入金额必须大于零。",
-    "Amount too small": "投入金额太小，无法获得份额。",
-    "Insufficient shares": "持有份额不足。",
-    "Pool lacks funds": "资金池余额不足，暂时无法按当前价格赎回。",
-    "Payout too small": "赎回金额太小。",
-    "Payout failed": "向钱包付款失败。",
+    "Only owner": "Only the administrator can perform this action.",
+    "Amount must be positive": "The amount must be greater than zero.",
+    "Amount too small": "The investment is too small to receive shares.",
+    "Insufficient shares": "You do not hold enough shares.",
+    "Pool lacks funds": "The pool does not have enough test ETH for this redemption.",
+    "Payout too small": "The redemption amount is too small.",
+    "Payout failed": "The payout to your wallet failed.",
   };
   return found ? translations[found] : reason.slice(0, 200);
 }
@@ -47,37 +47,37 @@ function preview() {
   try {
     const amount = parsePositive("buy-amount");
     $("buy-preview").textContent = state.priceWei > 0n
-      ? `预计获得：${shares(amount * 10n ** 18n / state.priceWei)} 份`
-      : "预计获得：连接钱包后显示";
-  } catch { $("buy-preview").textContent = "预计获得：— 份"; }
+      ? `Estimated shares: ${shares(amount * 10n ** 18n / state.priceWei)}`
+      : "Estimated shares: connect your wallet first";
+  } catch { $("buy-preview").textContent = "Estimated shares: —"; }
   try {
     const units = parsePositive("redeem-shares");
     $("redeem-preview").textContent = state.priceWei > 0n
-      ? `预计收到：${eth(units * state.priceWei / 10n ** 18n)} 测试 ETH`
-      : "预计收到：连接钱包后显示";
-  } catch { $("redeem-preview").textContent = "预计收到：— 测试 ETH"; }
+      ? `Estimated payout: ${eth(units * state.priceWei / 10n ** 18n)} test ETH`
+      : "Estimated payout: connect your wallet first";
+  } catch { $("redeem-preview").textContent = "Estimated payout: — test ETH"; }
 }
 
 async function requireSepolia() {
   const network = await state.provider.getNetwork();
-  if (network.chainId !== 11155111n) throw new Error("请先在 MetaMask 中切换到 Sepolia 测试网。");
+  if (network.chainId !== 11155111n) throw new Error("Switch MetaMask to the Sepolia test network first.");
 }
 
 async function connect() {
-  if (!window.ethereum) throw new Error("未检测到 MetaMask。请在安装了钱包扩展的浏览器中打开。");
-  if (!state.config.contractAddress) throw new Error("尚未配置合约地址。请先部署合约并设置 CONTRACT_ADDRESS。");
+  if (!window.ethereum) throw new Error("MetaMask was not detected. Open this page in a browser with the wallet extension.");
+  if (!state.config.contractAddress) throw new Error("No contract address is configured. Deploy the contract and set CONTRACT_ADDRESS first.");
   await window.ethereum.request({ method: "eth_requestAccounts" });
   state.provider = new ethers.BrowserProvider(window.ethereum);
   await requireSepolia();
   state.signer = await state.provider.getSigner();
   state.account = await state.signer.getAddress();
   const code = await state.provider.getCode(state.config.contractAddress);
-  if (code === "0x") throw new Error("Sepolia 上找不到该合约地址，请检查 CONTRACT_ADDRESS。");
+  if (code === "0x") throw new Error("No contract was found at this address on Sepolia. Check CONTRACT_ADDRESS.");
   state.contract = new ethers.Contract(state.config.contractAddress, abi, state.signer);
   $("account").textContent = state.account;
   $("connect").textContent = `${state.account.slice(0, 6)}…${state.account.slice(-4)}`;
   await refresh();
-  status("钱包已连接到 Sepolia。", "success");
+  status("Wallet connected to Sepolia.", "success");
 }
 
 async function refresh() {
@@ -106,7 +106,7 @@ function eventStartBlock(current) {
 
 async function loadHistory() {
   const container = $("history");
-  container.textContent = "正在读取链上事件…";
+  container.textContent = "Loading on-chain events…";
   try {
     const current = await state.provider.getBlockNumber();
     const fromBlock = eventStartBlock(current);
@@ -114,71 +114,71 @@ async function loadHistory() {
       state.contract.queryFilter(state.contract.filters.SharesPurchased(state.account), fromBlock, current),
       state.contract.queryFilter(state.contract.filters.SharesRedeemed(state.account), fromBlock, current),
     ]);
-    const events = [...buys.map((e) => ({ e, action: "买入", amount: e.args.paidWei, units: e.args.shares })),
-      ...sells.map((e) => ({ e, action: "赎回", amount: e.args.paidWei, units: e.args.shares }))]
+    const events = [...buys.map((e) => ({ e, action: "Bought", amount: e.args.paidWei, units: e.args.shares })),
+      ...sells.map((e) => ({ e, action: "Redeemed", amount: e.args.paidWei, units: e.args.shares }))]
       .sort((a, b) => b.e.blockNumber - a.e.blockNumber || b.e.index - a.e.index);
     container.replaceChildren();
-    if (!events.length) { container.textContent = "暂无记录。"; return; }
+    if (!events.length) { container.textContent = "No transactions found."; return; }
     for (const item of events) {
       const row = document.createElement("div");
       row.className = "history-item";
       const info = document.createElement("div");
       const label = document.createElement("strong");
-      label.textContent = `${item.action} ${shares(item.units)} 份`;
+      label.textContent = `${item.action} ${shares(item.units)} shares`;
       const detail = document.createElement("span");
-      detail.textContent = `${eth(item.amount)} 测试 ETH · 区块 ${item.e.blockNumber}`;
+      detail.textContent = `${eth(item.amount)} test ETH · Block ${item.e.blockNumber}`;
       info.append(label, detail);
       const link = document.createElement("a");
       link.href = `https://sepolia.etherscan.io/tx/${item.e.transactionHash}`;
       link.target = "_blank";
       link.rel = "noopener noreferrer";
-      link.textContent = "查看交易";
+      link.textContent = "View transaction";
       row.append(info, link);
       container.append(row);
     }
   } catch (error) {
-    container.textContent = `历史记录读取失败：${friendly(error)}。可用交易哈希在 Sepolia 区块浏览器核对。`;
+    container.textContent = `Could not load transaction history: ${friendly(error)}. Check transaction hashes on Sepolia Etherscan.`;
   }
 }
 
 async function loadPriceHistory() {
   const container = $("price-history");
-  container.textContent = "正在读取价格记录…";
+  container.textContent = "Loading price changes…";
   try {
     const current = await state.provider.getBlockNumber();
     const events = await state.contract.queryFilter(state.contract.filters.PriceChanged(), eventStartBlock(current), current);
     container.replaceChildren();
-    if (!events.length) { container.textContent = "此查询范围内暂无价格记录。"; return; }
+    if (!events.length) { container.textContent = "No price changes found in this block range."; return; }
     for (const event of events.slice(-5).reverse()) {
       const row = document.createElement("div");
       row.className = "history-item";
       const info = document.createElement("div");
       const label = document.createElement("strong");
-      label.textContent = `${eth(event.args.oldPriceWei)} → ${eth(event.args.newPriceWei)} 测试 ETH / 份`;
+      label.textContent = `${eth(event.args.oldPriceWei)} → ${eth(event.args.newPriceWei)} test ETH / share`;
       const detail = document.createElement("span");
-      detail.textContent = `区块 ${event.blockNumber}`;
+      detail.textContent = `Block ${event.blockNumber}`;
       info.append(label, detail);
       const link = document.createElement("a");
       link.href = `https://sepolia.etherscan.io/tx/${event.transactionHash}`;
       link.target = "_blank";
       link.rel = "noopener noreferrer";
-      link.textContent = "查看交易";
+      link.textContent = "View transaction";
       row.append(info, link);
       container.append(row);
     }
-  } catch (error) { container.textContent = `价格记录读取失败：${friendly(error)}`; }
+  } catch (error) { container.textContent = `Could not load price history: ${friendly(error)}`; }
 }
 
 async function sendTransaction(promiseFactory, label) {
-  if (!state.contract) throw new Error("请先连接钱包。");
+  if (!state.contract) throw new Error("Connect your wallet first.");
   await requireSepolia();
-  status(`请在 MetaMask 中确认${label}…`);
+  status(`Confirm ${label} in MetaMask…`);
   const tx = await promiseFactory();
-  status(`交易已提交，等待 Sepolia 确认：${tx.hash}`);
+  status(`Transaction submitted. Waiting for Sepolia confirmation: ${tx.hash}`);
   const receipt = await tx.wait();
-  if (receipt.status !== 1) throw new Error("交易执行失败。");
+  if (receipt.status !== 1) throw new Error("The transaction failed.");
   await refresh();
-  status(`${label}成功。交易哈希：${tx.hash}`, "success");
+  status(`${label} successful. Transaction hash: ${tx.hash}`, "success");
 }
 
 function bind(formId, action) {
@@ -194,19 +194,19 @@ function bind(formId, action) {
 
 bind("buy-form", async () => {
   const amount = parsePositive("buy-amount");
-  await sendTransaction(() => state.contract.buy({ value: amount }), "买入");
+  await sendTransaction(() => state.contract.buy({ value: amount }), "purchase");
 });
 bind("redeem-form", async () => {
   const units = parsePositive("redeem-shares");
-  await sendTransaction(() => state.contract.redeem(units), "赎回");
+  await sendTransaction(() => state.contract.redeem(units), "redemption");
 });
 bind("price-form", async () => {
   const price = parsePositive("new-price");
-  await sendTransaction(() => state.contract.setPrice(price), "更新价格");
+  await sendTransaction(() => state.contract.setPrice(price), "price update");
 });
 bind("fund-form", async () => {
   const amount = parsePositive("fund-amount");
-  await sendTransaction(() => state.contract.fundPool({ value: amount }), "补充资金池");
+  await sendTransaction(() => state.contract.fundPool({ value: amount }), "pool funding");
 });
 $("buy-amount").addEventListener("input", preview);
 $("redeem-shares").addEventListener("input", preview);
@@ -219,10 +219,10 @@ if (window.ethereum) {
 
 try {
   const [configResponse, abiResponse] = await Promise.all([fetch("/api/config"), fetch("/static/MicroFund.abi.json")]);
-  if (!configResponse.ok || !abiResponse.ok) throw new Error("无法读取应用配置或 ABI 文件。");
+  if (!configResponse.ok || !abiResponse.ok) throw new Error("Could not load the application configuration or ABI.");
   state.config = await configResponse.json();
   abi = await abiResponse.json();
-  $("contract-address").textContent = state.config.contractAddress || "未配置";
-  status(state.config.contractAddress ? "准备就绪，请连接 MetaMask。" : "尚未配置合约地址；请先按 README 部署合约。",
+  $("contract-address").textContent = state.config.contractAddress || "Not configured";
+  status(state.config.contractAddress ? "Ready. Connect MetaMask to continue." : "No contract address configured. Deploy the contract as described in the README.",
     state.config.contractAddress ? "" : "error");
 } catch (error) { status(friendly(error), "error"); }

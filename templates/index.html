@@ -1,9 +1,9 @@
 <!doctype html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>MicroFund | 小额基金定投模拟</title>
+  <title>MicroFund | Micro-Investment Simulator</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>
@@ -12,76 +12,76 @@
       <div>
         <p class="eyebrow">SC6113 · Sepolia DApp</p>
         <h1>MicroFund</h1>
-        <p class="subtitle">用测试 ETH 体验小额基金的分次买入与赎回。</p>
+        <p class="subtitle">Explore recurring micro-investments with Sepolia test ETH.</p>
       </div>
-      <button id="connect" class="button outline" type="button">连接 MetaMask</button>
+      <button id="connect" class="button outline" type="button">Connect MetaMask</button>
     </header>
 
-    <p class="notice">教学模拟：份额不代表真实基金或证券。价格由管理员手动设置；涨价后的赎回需要资金池有足够测试 ETH。</p>
-    <p id="status" class="status" role="status" aria-live="polite">正在加载应用…</p>
+    <p class="notice">Educational simulation: shares do not represent a real fund or security. The administrator sets a simulated price. Redemptions require sufficient test ETH in the pool.</p>
+    <p id="status" class="status" role="status" aria-live="polite">Loading application…</p>
 
-    <section class="summary" aria-label="基金状态">
-      <article class="card"><span>模拟价格</span><strong id="price">—</strong><small>测试 ETH / 份</small></article>
-      <article class="card"><span>我的份额</span><strong id="shares">—</strong><small>份</small></article>
-      <article class="card"><span>当前估值</span><strong id="valuation">—</strong><small>测试 ETH</small></article>
-      <article class="card"><span>资金池余额</span><strong id="pool">—</strong><small>测试 ETH</small></article>
+    <section class="summary" aria-label="Fund status">
+      <article class="card"><span>Simulated price</span><strong id="price">—</strong><small>test ETH / share</small></article>
+      <article class="card"><span>My shares</span><strong id="shares">—</strong><small>shares</small></article>
+      <article class="card"><span>Current valuation</span><strong id="valuation">—</strong><small>test ETH</small></article>
+      <article class="card"><span>Pool balance</span><strong id="pool">—</strong><small>test ETH</small></article>
     </section>
 
-    <p class="account-line">钱包：<span id="account">未连接</span> · 合约：<span id="contract-address">未配置</span></p>
+    <p class="account-line">Wallet: <span id="account">Not connected</span> · Contract: <span id="contract-address">Not configured</span></p>
 
     <div class="columns">
       <section class="panel">
-        <h2>买入份额</h2>
-        <p>每次手动买入都会成为一笔可查的定投记录。</p>
+        <h2>Buy shares</h2>
+        <p>Each purchase creates a verifiable investment record.</p>
         <form id="buy-form">
-          <label for="buy-amount">投入测试 ETH</label>
-          <input id="buy-amount" type="number" min="0" step="any" placeholder="例如 0.02" required>
-          <p id="buy-preview" class="preview">预计获得：— 份</p>
-          <button class="button" type="submit">用 MetaMask 买入</button>
+          <label for="buy-amount">Amount in test ETH</label>
+          <input id="buy-amount" type="number" min="0" step="any" placeholder="e.g. 0.02" required>
+          <p id="buy-preview" class="preview">Estimated shares: —</p>
+          <button class="button" type="submit">Buy with MetaMask</button>
         </form>
       </section>
 
       <section class="panel">
-        <h2>赎回份额</h2>
-        <p>按当前模拟价格计算可收到的测试 ETH。</p>
+        <h2>Redeem shares</h2>
+        <p>Your payout is calculated using the current simulated price.</p>
         <form id="redeem-form">
-          <label for="redeem-shares">赎回份额</label>
-          <input id="redeem-shares" type="number" min="0" step="any" placeholder="例如 1" required>
-          <p id="redeem-preview" class="preview">预计收到：— 测试 ETH</p>
-          <button class="button" type="submit">赎回到我的钱包</button>
+          <label for="redeem-shares">Shares to redeem</label>
+          <input id="redeem-shares" type="number" min="0" step="any" placeholder="e.g. 1" required>
+          <p id="redeem-preview" class="preview">Estimated payout: — test ETH</p>
+          <button class="button" type="submit">Redeem to my wallet</button>
         </form>
       </section>
     </div>
 
     <section class="panel history-panel">
-      <div class="section-heading"><h2>我的链上记录</h2><button id="refresh" class="text-button" type="button">刷新</button></div>
-      <p class="muted">从合约事件读取；显示买入和赎回交易。</p>
-      <div id="history" class="history">连接钱包后查看记录。</div>
+      <div class="section-heading"><h2>My on-chain history</h2><button id="refresh" class="text-button" type="button">Refresh</button></div>
+      <p class="muted">Purchases and redemptions read from contract events.</p>
+      <div id="history" class="history">Connect your wallet to view transactions.</div>
     </section>
 
     <section class="panel history-panel">
-      <h2>模拟价格变更</h2>
-      <p class="muted">管理员的每次改价都记录在链上。</p>
-      <div id="price-history" class="history">连接钱包后查看记录。</div>
+      <h2>Simulated price changes</h2>
+      <p class="muted">Every administrator price update is recorded on-chain.</p>
+      <div id="price-history" class="history">Connect your wallet to view price changes.</div>
     </section>
 
     <section id="admin" class="panel admin-panel" hidden>
-      <h2>管理员操作</h2>
-      <p>价格变更会记录在链上。补充资金池后，才能支付超出原投入额的赎回。</p>
+      <h2>Administrator controls</h2>
+      <p>Price updates are recorded on-chain. Add test ETH to the pool before paying redemptions above the original deposits.</p>
       <div class="columns">
         <form id="price-form">
-          <label for="new-price">新价格（测试 ETH / 份）</label>
-          <input id="new-price" type="number" min="0" step="any" placeholder="例如 0.02" required>
-          <button class="button outline" type="submit">更新模拟价格</button>
+          <label for="new-price">New price (test ETH / share)</label>
+          <input id="new-price" type="number" min="0" step="any" placeholder="e.g. 0.02" required>
+          <button class="button outline" type="submit">Update simulated price</button>
         </form>
         <form id="fund-form">
-          <label for="fund-amount">补充资金池（测试 ETH）</label>
-          <input id="fund-amount" type="number" min="0" step="any" placeholder="例如 0.02" required>
-          <button class="button outline" type="submit">补充测试 ETH</button>
+          <label for="fund-amount">Add to pool (test ETH)</label>
+          <input id="fund-amount" type="number" min="0" step="any" placeholder="e.g. 0.02" required>
+          <button class="button outline" type="submit">Add test ETH</button>
         </form>
       </div>
     </section>
-    <footer>价格由管理员设定 · 交易由 Sepolia 智能合约执行 · 仅供课程测试</footer>
+    <footer>Administrator-set price · Sepolia smart contract transactions · Educational use only</footer>
   </main>
   <script type="module" src="{{ url_for('static', filename='app.js') }}"></script>
 </body>
