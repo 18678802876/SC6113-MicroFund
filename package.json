@@ -1,0 +1,13 @@
+{
+  "name": "sc6113-micro-investment-dapp",
+  "private": true,
+  "scripts": {
+    "test": "node --test tests/contract.test.cjs",
+    "compile": "node scripts/compile.cjs"
+  },
+  "devDependencies": {
+    "ethers": "6.15.0",
+    "ganache": "7.9.2",
+    "solc": "0.8.24"
+  }
+}
