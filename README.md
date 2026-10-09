@@ -2,6 +2,8 @@
 
 MicroFund is a teaching project for SC6113. Users buy simulated fund shares with Sepolia test ETH over multiple transactions, redeem shares at the current simulated price, and inspect on-chain events. Shares do **not** represent a real fund or security. The contract owner sets the price manually. Flask serves the website and contract configuration; the smart contract holds the test ETH and share balances.
 
+The website defaults to English. Use the **中文 / English** button in the header to switch languages; your choice is saved in the browser.
+
 ## Rules
 
 - The price is denominated in wei per share. Shares have 18 decimal places.
@@ -17,6 +19,7 @@ MicroFund is a teaching project for SC6113. Users buy simulated fund shares with
 contracts/MicroFund.sol      Solidity contract source
 static/MicroFund.abi.json    Compiled contract ABI
 static/app.js                MetaMask interactions and event history
+static/i18n.js               English and Chinese interface text
 static/vendor/ethers.min.js ethers.js 6.15.0 browser library
 static/styles.css            Page styles
 templates/index.html        Flask page

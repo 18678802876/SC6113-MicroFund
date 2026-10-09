@@ -12,76 +12,79 @@
       <div>
         <p class="eyebrow">SC6113 · Sepolia DApp</p>
         <h1>MicroFund</h1>
-        <p class="subtitle">Explore recurring micro-investments with Sepolia test ETH.</p>
+        <p class="subtitle" data-i18n="subtitle">Explore recurring micro-investments with Sepolia test ETH.</p>
       </div>
-      <button id="connect" class="button outline" type="button">Connect MetaMask</button>
+      <div class="topbar-actions">
+        <button id="language-toggle" class="button language-button" type="button" aria-label="Switch to Chinese">中文</button>
+        <button id="connect" class="button outline" type="button" data-i18n="connect">Connect MetaMask</button>
+      </div>
     </header>
 
-    <p class="notice">Educational simulation: shares do not represent a real fund or security. The administrator sets a simulated price. Redemptions require sufficient test ETH in the pool.</p>
+    <p class="notice" data-i18n="notice">Educational simulation: shares do not represent a real fund or security. The administrator sets a simulated price. Redemptions require sufficient test ETH in the pool.</p>
     <p id="status" class="status" role="status" aria-live="polite">Loading application…</p>
 
-    <section class="summary" aria-label="Fund status">
-      <article class="card"><span>Simulated price</span><strong id="price">—</strong><small>test ETH / share</small></article>
-      <article class="card"><span>My shares</span><strong id="shares">—</strong><small>shares</small></article>
-      <article class="card"><span>Current valuation</span><strong id="valuation">—</strong><small>test ETH</small></article>
-      <article class="card"><span>Pool balance</span><strong id="pool">—</strong><small>test ETH</small></article>
+    <section class="summary" aria-label="Fund status" data-i18n-aria="fundStatus">
+      <article class="card"><span data-i18n="simPrice">Simulated price</span><strong id="price">—</strong><small data-i18n="testEthPerShare">test ETH / share</small></article>
+      <article class="card"><span data-i18n="myShares">My shares</span><strong id="shares">—</strong><small data-i18n="sharesUnit">shares</small></article>
+      <article class="card"><span data-i18n="valuation">Current valuation</span><strong id="valuation">—</strong><small data-i18n="testEth">test ETH</small></article>
+      <article class="card"><span data-i18n="poolBalance">Pool balance</span><strong id="pool">—</strong><small data-i18n="testEth">test ETH</small></article>
     </section>
 
-    <p class="account-line">Wallet: <span id="account">Not connected</span> · Contract: <span id="contract-address">Not configured</span></p>
+    <p class="account-line"><span data-i18n="wallet">Wallet</span>: <span id="account">Not connected</span> · <span data-i18n="contract">Contract</span>: <span id="contract-address">Not configured</span></p>
 
     <div class="columns">
       <section class="panel">
-        <h2>Buy shares</h2>
-        <p>Each purchase creates a verifiable investment record.</p>
+        <h2 data-i18n="buyTitle">Buy shares</h2>
+        <p data-i18n="buyDesc">Each purchase creates a verifiable investment record.</p>
         <form id="buy-form">
-          <label for="buy-amount">Amount in test ETH</label>
-          <input id="buy-amount" type="number" min="0" step="any" placeholder="e.g. 0.02" required>
+          <label for="buy-amount" data-i18n="buyAmount">Amount in test ETH</label>
+          <input id="buy-amount" type="number" min="0" step="any" placeholder="e.g. 0.02" data-i18n-placeholder="exampleAmount" required>
           <p id="buy-preview" class="preview">Estimated shares: —</p>
-          <button class="button" type="submit">Buy with MetaMask</button>
+          <button class="button" type="submit" data-i18n="buyButton">Buy with MetaMask</button>
         </form>
       </section>
 
       <section class="panel">
-        <h2>Redeem shares</h2>
-        <p>Your payout is calculated using the current simulated price.</p>
+        <h2 data-i18n="redeemTitle">Redeem shares</h2>
+        <p data-i18n="redeemDesc">Your payout is calculated using the current simulated price.</p>
         <form id="redeem-form">
-          <label for="redeem-shares">Shares to redeem</label>
-          <input id="redeem-shares" type="number" min="0" step="any" placeholder="e.g. 1" required>
+          <label for="redeem-shares" data-i18n="redeemShares">Shares to redeem</label>
+          <input id="redeem-shares" type="number" min="0" step="any" placeholder="e.g. 1" data-i18n-placeholder="exampleShares" required>
           <p id="redeem-preview" class="preview">Estimated payout: — test ETH</p>
-          <button class="button" type="submit">Redeem to my wallet</button>
+          <button class="button" type="submit" data-i18n="redeemButton">Redeem to my wallet</button>
         </form>
       </section>
     </div>
 
     <section class="panel history-panel">
-      <div class="section-heading"><h2>My on-chain history</h2><button id="refresh" class="text-button" type="button">Refresh</button></div>
-      <p class="muted">Purchases and redemptions read from contract events.</p>
+      <div class="section-heading"><h2 data-i18n="historyTitle">My on-chain history</h2><button id="refresh" class="text-button" type="button" data-i18n="refresh">Refresh</button></div>
+      <p class="muted" data-i18n="historyDesc">Purchases and redemptions read from contract events.</p>
       <div id="history" class="history">Connect your wallet to view transactions.</div>
     </section>
 
     <section class="panel history-panel">
-      <h2>Simulated price changes</h2>
-      <p class="muted">Every administrator price update is recorded on-chain.</p>
+      <h2 data-i18n="priceHistoryTitle">Simulated price changes</h2>
+      <p class="muted" data-i18n="priceHistoryDesc">Every administrator price update is recorded on-chain.</p>
       <div id="price-history" class="history">Connect your wallet to view price changes.</div>
     </section>
 
     <section id="admin" class="panel admin-panel" hidden>
-      <h2>Administrator controls</h2>
-      <p>Price updates are recorded on-chain. Add test ETH to the pool before paying redemptions above the original deposits.</p>
+      <h2 data-i18n="adminTitle">Administrator controls</h2>
+      <p data-i18n="adminDesc">Price updates are recorded on-chain. Add test ETH to the pool before paying redemptions above the original deposits.</p>
       <div class="columns">
         <form id="price-form">
-          <label for="new-price">New price (test ETH / share)</label>
-          <input id="new-price" type="number" min="0" step="any" placeholder="e.g. 0.02" required>
-          <button class="button outline" type="submit">Update simulated price</button>
+          <label for="new-price" data-i18n="newPrice">New price (test ETH / share)</label>
+          <input id="new-price" type="number" min="0" step="any" placeholder="e.g. 0.02" data-i18n-placeholder="exampleAmount" required>
+          <button class="button outline" type="submit" data-i18n="updatePrice">Update simulated price</button>
         </form>
         <form id="fund-form">
-          <label for="fund-amount">Add to pool (test ETH)</label>
-          <input id="fund-amount" type="number" min="0" step="any" placeholder="e.g. 0.02" required>
-          <button class="button outline" type="submit">Add test ETH</button>
+          <label for="fund-amount" data-i18n="addToPool">Add to pool (test ETH)</label>
+          <input id="fund-amount" type="number" min="0" step="any" placeholder="e.g. 0.02" data-i18n-placeholder="exampleAmount" required>
+          <button class="button outline" type="submit" data-i18n="addTestEth">Add test ETH</button>
         </form>
       </div>
     </section>
-    <footer>Administrator-set price · Sepolia smart contract transactions · Educational use only</footer>
+    <footer data-i18n="footer">Administrator-set price · Sepolia smart contract transactions · Educational use only</footer>
   </main>
   <script type="module" src="{{ url_for('static', filename='app.js') }}"></script>
 </body>
